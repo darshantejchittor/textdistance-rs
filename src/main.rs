@@ -12,7 +12,7 @@ mod longest_common_substring;
 mod overlap;
 mod tversky;
 mod bag_distance;
-
+mod qgram;
 
 
 fn main() {
