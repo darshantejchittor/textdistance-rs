@@ -8,6 +8,11 @@ mod cosine;
 mod damerau;
 mod lcs;
 mod needleman_wunsch;
+mod longest_common_substring;
+mod overlap;
+mod tversky;
+mod bag_distance;
+
 
 
 fn main() {
