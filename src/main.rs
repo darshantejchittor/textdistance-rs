@@ -1,4 +1,5 @@
 mod levenshtein;
+mod hamming;
 
 fn main() {
     let distance = levenshtein::levenshtein("kitten", "sitting");
