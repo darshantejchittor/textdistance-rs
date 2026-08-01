@@ -7,6 +7,8 @@ mod jaro_winkler;
 mod cosine;
 mod damerau;
 mod lcs;
+mod needleman_wunsch;
+
 
 fn main() {
     let distance = levenshtein::levenshtein("kitten", "sitting");
