@@ -41,4 +41,14 @@ mod tests {
     fn both_empty() {
         assert_eq!(jaccard_similarity("", ""), 1.0);
     }
+
+    #[test]
+    fn distance_identical() {
+        assert_eq!(jaccard_distance("test", "test"), 0.0);
+    }
+
+    #[test]
+    fn distance_no_overlap() {
+        assert_eq!(jaccard_distance("abc", "xyz"), 1.0);
+    }
 }
