@@ -17,8 +17,14 @@ pub fn jaro_winkler_similarity(a: &str, b: &str) -> f64 {
     }
 
     const PREFIX_WEIGHT: f64 = 0.1;
-    jaro_sim + (prefix_len as f64 * PREFIX_WEIGHT * (1.0 - jaro_sim))
-}
+    const BOOST_THRESHOLD: f64 = 0.7;
+
+    if jaro_sim > BOOST_THRESHOLD {
+        jaro_sim + (prefix_len as f64 * PREFIX_WEIGHT * (1.0 - jaro_sim))
+    } else {
+        jaro_sim
+    }
+} // <-- THIS BRACE WAS MISSING
 
 pub fn jaro_winkler_distance(a: &str, b: &str) -> f64 {
     1.0 - jaro_winkler_similarity(a, b)

@@ -1,0 +1,15 @@
+pub mod levenshtein;
+pub mod hamming;
+pub mod jaccard;
+pub mod sorensen;
+pub mod jaro;
+pub mod jaro_winkler;
+pub mod cosine;
+pub mod damerau;
+pub mod lcs;
+pub mod needleman_wunsch;
+pub mod longest_common_substring;
+pub mod overlap;
+pub mod tversky;
+pub mod bag_distance;
+pub mod qgram;

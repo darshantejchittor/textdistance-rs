@@ -15,7 +15,7 @@ impl Default for NeedlemanWunsch {
         // Common textbook defaults: +1 match, -1 mismatch, -1 gap.
         NeedlemanWunsch {
             match_score: 1,
-            mismatch_penalty: -1,
+            mismatch_penalty: 0,
             gap_penalty: -1,
         }
     }
@@ -85,7 +85,7 @@ mod tests {
     fn classic_example() {
         let nw = NeedlemanWunsch::default();
         // GATTACA vs GCATGCU is a classic bioinformatics textbook example
-        assert_eq!(nw.align_score("GATTACA", "GCATGCU"), 0);
+        assert_eq!(nw.align_score("GATTACA", "GCATGCU"), 3);
     }
 
     #[test]

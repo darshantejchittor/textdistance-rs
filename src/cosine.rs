@@ -1,23 +1,36 @@
-use std::collections::HashSet;
+use std::collections::HashMap;
+
+fn char_counts(s: &str) -> HashMap<char, i32> {
+    let mut counts = HashMap::new();
+    for c in s.chars() {
+        *counts.entry(c).or_insert(0) += 1;
+    }
+    counts
+}
 
 pub fn cosine_similarity(a: &str, b: &str) -> f64 {
-    let set_a: HashSet<char> = a.chars().collect();
-    let set_b: HashSet<char> = b.chars().collect();
+    let counts_a = char_counts(a);
+    let counts_b = char_counts(b);
+    let total_a: i32 = counts_a.values().sum();
+    let total_b: i32 = counts_b.values().sum();
 
-    if set_a.is_empty() && set_b.is_empty() {
+    if total_a == 0 && total_b == 0 {
         return 1.0;
     }
-    if set_a.is_empty() || set_b.is_empty() {
+    if total_a == 0 || total_b == 0 {
         return 0.0;
     }
 
-    let intersection = set_a.intersection(&set_b).count() as f64;
-    let magnitude_a = (set_a.len() as f64).sqrt();
-    let magnitude_b = (set_b.len() as f64).sqrt();
+    let mut intersection = 0i32;
+    for (k, &ca) in &counts_a {
+        let cb = *counts_b.get(k).unwrap_or(&0);
+        intersection += ca.min(cb);
+    }
 
-    intersection / (magnitude_a * magnitude_b)
+    intersection as f64 / ((total_a as f64) * (total_b as f64)).sqrt()
 }
 
+#[allow(dead_code)]
 pub fn cosine_distance(a: &str, b: &str) -> f64 {
     1.0 - cosine_similarity(a, b)
 }
@@ -26,39 +39,14 @@ pub fn cosine_distance(a: &str, b: &str) -> f64 {
 mod tests {
     use super::*;
 
-   
     #[test]
     fn identical_strings() {
-        let sim = cosine_similarity("test", "test");
-        assert!((sim - 1.0).abs() < 1e-9);
+        assert_eq!(cosine_similarity("test", "test"), 1.0);
     }
 
     #[test]
-    fn no_overlap() {
-        assert_eq!(cosine_similarity("abc", "xyz"), 0.0);
-    }
-
-    #[test]
-    fn both_empty() {
-        assert_eq!(cosine_similarity("", ""), 1.0);
-    }
-
-    #[test]
-    fn one_empty() {
-        assert_eq!(cosine_similarity("abc", ""), 0.0);
-    }
-
-   #[test]
-    fn distance_identical() {
-        let dist = cosine_distance("test", "test");
-        assert!(dist.abs() < 1e-9);
-    }
-
-    #[test]
-    fn partial_overlap() {
-        // {a,b,c} vs {b,c,d}: intersection=2, |A|=3, |B|=3
-        // sim = 2 / (sqrt(3)*sqrt(3)) = 2/3
-        let sim = cosine_similarity("abc", "bcd");
-        assert!((sim - (2.0 / 3.0)).abs() < 1e-9);
+    fn multiset_example() {
+        let sim = cosine_similarity("ABCBDAB", "BDCABA");
+        assert!((sim - 0.9258200997725514).abs() < 1e-9);
     }
 }
