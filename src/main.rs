@@ -22,6 +22,55 @@ fn main() {
         "Distance between 'kitten' and 'sitting' = {}",
         distance
     );
+
+    run_benchmarks();
+}
+
+fn run_benchmarks() {
+    use std::time::Instant;
+
+    let pairs = [
+        ("kitten", "sitting"),
+        ("ABCBDAB", "BDCABA"),
+        ("the quick brown fox", "the quick brown fax"),
+    ];
+
+    println!("\n--- Benchmark: 10,000 iterations per algorithm per pair ---\n");
+
+    for (a, b) in pairs.iter() {
+        println!("Pair: {:?} vs {:?}", a, b);
+
+        macro_rules! bench {
+            ($name:expr, $call:expr) => {
+                let start = Instant::now();
+                for _ in 0..10_000 {
+                    $call;
+                }
+                println!("  {:<22} {:?}", $name, start.elapsed());
+            };
+        }
+
+        bench!("levenshtein:", levenshtein::levenshtein(a, b));
+        bench!("hamming:", hamming::hamming(a, b));
+        bench!("damerau_levenshtein:", damerau::damerau_levenshtein(a, b));
+        bench!("jaccard:", jaccard::jaccard_similarity(a, b));
+        bench!("sorensen:", sorensen::sorensen_dice_similarity(a, b));
+        bench!("cosine:", cosine::cosine_similarity(a, b));
+        bench!("overlap:", overlap::overlap_similarity(a, b));
+        bench!("tversky:", tversky::Tversky::default().similarity(a, b));
+        bench!("bag_distance:", bag_distance::bag_distance(a, b));
+        bench!("jaro:", jaro::jaro_similarity(a, b));
+        bench!("jaro_winkler:", jaro_winkler::jaro_winkler_similarity(a, b));
+        bench!("lcs (subsequence):", lcs::lcs_length(a, b));
+        bench!("longest_common_substr:", longest_common_substring::longest_common_substring_length(a, b));
+        bench!(
+            "needleman_wunsch:",
+            needleman_wunsch::NeedlemanWunsch::default().align_score(a, b)
+        );
+        bench!("qgram (bigram):", qgram::qgram_distance(a, b, 2));
+
+        println!();
+    }
 }
 
 #[cfg(test)]
